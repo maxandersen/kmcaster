@@ -65,6 +65,16 @@ public final class Settings implements Callable<Integer> {
   private final KmCaster mKmCaster;
 
   /**
+   * Whether to report key presses to the console.
+   */
+  @CommandLine.Option(
+    names = {"-r", "--report"},
+    description = "Report key and mouse presses to the console",
+    defaultValue = "false"
+  )
+  private boolean mReport;
+
+  /**
    * Milliseconds to wait before releasing (clearing) a regular key.
    */
   @CommandLine.Option(
@@ -269,4 +279,9 @@ public final class Settings implements Callable<Integer> {
   public String getBackgroundColour() {
     return mBackgroundColour;
   }
+
+  public boolean isReport() {
+    return mReport;
+  }
+  
 }

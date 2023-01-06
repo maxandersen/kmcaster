@@ -139,7 +139,7 @@ public final class KmCaster extends JFrame {
   }
 
   private void initKeyboardListener( final PropertyChangeListener listener ) {
-    final KeyboardListener keyboardListener = new KeyboardListener();
+    final KeyboardListener keyboardListener = new KeyboardListener(getUserSettings().isReport());
     addNativeKeyListener( keyboardListener );
     keyboardListener.addPropertyChangeListener( listener );
     keyboardListener.initModifiers();

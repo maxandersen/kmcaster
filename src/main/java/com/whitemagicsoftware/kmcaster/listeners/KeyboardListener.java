@@ -288,14 +288,17 @@ public final class KeyboardListener
   private final Map<HardwareSwitch, Boolean> mModifiers = new HashMap<>();
 
   private final Set<HandedSwitch> mHandedModifiers = new HashSet<>();
+  private boolean report;
 
   /**
    * Creates a keyboard listener that publishes events when keys are either
    * pressed or released. The constructor initializes all modifier keys to
    * the released state because the native keyboard hook API does not offer
    * a way to query what keys are currently pressed.
+ * @param b
    */
-  public KeyboardListener() {
+  public KeyboardListener(boolean report) {
+    this.report = report;
     for( final var key : modifierSwitches() ) {
       mModifiers.put( key, FALSE );
     }
@@ -308,6 +311,8 @@ public final class KeyboardListener
    */
   @Override
   public void nativeKeyTyped( final NativeKeyEvent e ) {
+    report(e);
+
     if( isRegular( e ) ) {
       String key = getDisplayText( e.getKeyChar() );
 
@@ -322,6 +327,8 @@ public final class KeyboardListener
 
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
+    report(e);
+
     dispatchModifiers( e, TRUE );
 
     if( e.isActionKey() && isRegular( e ) && IS_OS_WINDOWS ) {
@@ -331,6 +338,8 @@ public final class KeyboardListener
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
+    report(e);
+
     dispatchModifiers( e, FALSE );
 
     if( e.isActionKey() && isRegular( e ) && IS_OS_WINDOWS ) {
@@ -449,5 +458,21 @@ public final class KeyboardListener
 
   private String getDisplayText( final char keyChar ) {
     return CHAR_CODES.getOrDefault( keyChar, String.valueOf( keyChar ) );
+  }
+
+  int last=-1;
+
+  /**
+   * prints the key event to the console, putting a newline on each new key
+   * for easier visual separation.
+   */
+  private void report(NativeKeyEvent e) {
+    if (report) {
+      if(e.getRawCode() != last) {
+        System.out.println();
+      }
+      System.out.println(e.paramString());
+      last = e.getRawCode();
+    }
   }
 }
